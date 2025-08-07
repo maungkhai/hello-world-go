@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        #chat { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; margin-bottom: 10px; }
+        #msg { width: 80%; }
+        #send { width: 18%; }
+    </style>
+</head>
+<body>
+    <h2>Simple Go Chat</h2>
+    <div id="chat"></div>
+    <input type="text" id="msg" placeholder="Type a message...">
+    <button id="send">Send</button>
+    <script>
+        const chat = document.getElementById('chat');
+        const msg = document.getElementById('msg');
+        const send = document.getElementById('send');
+        const ws = new WebSocket('ws://' + location.host + '/v1.0/ws');
+        ws.onmessage = function(event) {
+            chat.innerHTML += event.data + '<br>';
+            chat.scrollTop = chat.scrollHeight;
+        };
+        send.onclick = function() {
+            if (msg.value) {
+                ws.send(msg.value);
+                msg.value = '';
+            }
+        };
+        msg.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') send.onclick();
+        });
+    </script>
+</body>
+</html>
